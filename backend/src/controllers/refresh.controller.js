@@ -5,21 +5,26 @@ const refreshToken = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(401);
 
-  const refreshToken = cookies.jwt;
+  const oldRefreshToken = cookies.jwt;
 
-  const foundUser = await User.findOne({ refreshToken }).exec();
+  const foundUser = await User.findOne({ refreshToken: oldRefreshToken }).exec();
   if (!foundUser) return res.sendStatus(403);
 
+  // Clear old refresh token immediately
+  foundUser.refreshToken = "";
+  await foundUser.save();
+
   jwt.verify(
-    refreshToken,
+    oldRefreshToken,
     process.env.REFRESH_TOKEN_SECRET,
-    (err, decoded) => {
+    async (err, decoded) => {
       if (err || decoded.username !== foundUser.username) {
         return res.sendStatus(403);
       }
 
       const roles = Object.values(foundUser.roles);
 
+      // 🔐 NEW access token
       const accessToken = jwt.sign(
         {
           UserInfo: {
@@ -30,6 +35,26 @@ const refreshToken = async (req, res) => {
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "15m" }
       );
+
+      // 🔁 NEW refresh token (ROTATED)
+      const newRefreshToken = jwt.sign(
+        { username: foundUser.username },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      foundUser.refreshToken = newRefreshToken;
+      await foundUser.save();
+
+      res.cookie("jwt", newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        // secure: false, // for development only
+        // secure: process.env.NODE_ENV === "production",
+        sameSite: "None",
+        // sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
 
       res.json({ accessToken });
     }

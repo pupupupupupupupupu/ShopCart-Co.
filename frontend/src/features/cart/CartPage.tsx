@@ -4,6 +4,10 @@ import CartItem from "./CartItem";
 import EmptyCart from "./EmptyCart";
 import Loader from "../../components/common/Loader";
 import ErrorBox from "../../components/common/ErrorBox";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
+import useCart from "../../hooks/useCart";
+
 
 export type CartProduct = {
   _id: string;
@@ -22,10 +26,16 @@ const CartPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+  const { refreshCart } = useCart();
+
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const data = await getCart();
+      // const data = await getCart();
+      // setItems(data.items || []);
+      const data = await getCart(axiosPrivate);
       setItems(data.items || []);
     } catch (err) {
       setError("Failed to load cart");
@@ -35,7 +45,7 @@ const CartPage = () => {
   };
 
   const handleClearCart = async () => {
-    await clearCart();
+    await clearCart(axiosPrivate);
     setItems([]);
   };
 
@@ -54,6 +64,17 @@ const CartPage = () => {
     0
   );
 
+  const handleCheckout = async () => {
+  try {
+    await axiosPrivate.post("/orders");
+    navigate("/orders");
+    await clearCart(axiosPrivate);
+    await refreshCart();
+  } catch {
+    setError("Checkout failed. Please try again.");
+  }
+};
+
   return (
     <main>
       <h2>Your Cart</h2>
@@ -70,7 +91,12 @@ const CartPage = () => {
 
       <h3>Total: ${totalPrice.toFixed(2)}</h3>
 
-      <button onClick={handleClearCart}>Clear Cart</button>
+      <div style={{ marginTop: "1rem" }}>
+        <button onClick={handleCheckout}>Place Order</button>
+        <button onClick={handleClearCart} style={{ marginLeft: "1rem" }}>
+          Clear Cart
+        </button>
+      </div>
     </main>
   );
 };

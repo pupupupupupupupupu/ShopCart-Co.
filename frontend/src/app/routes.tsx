@@ -9,6 +9,8 @@ import AdminDashboard from "../features/admin/AdminDashboard";
 
 import RequireAuth from "../auth/RequireAuth";
 import RequireAdmin from "../auth/RequireAdmin";
+import AdminProducts from "../features/admin/AdminProducts";
+import PersistLogin from "../auth/PersistLogin";
 
 const AppRoutes = () => {
   return (
@@ -18,14 +20,19 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* 🔐 Protected Routes (User) */}
-      <Route element={<RequireAuth />}>
-        <Route path="/cart" element={<CartPage />} />
-      </Route>
+      <Route element={<PersistLogin />}>
+        {/* 🔐 Logged-in Users */}
+        <Route element={<RequireAuth />}>
+          <Route path="/cart" element={<CartPage />} />
+        </Route>
 
-      {/* 🛡️ Admin Routes */}
-      <Route element={<RequireAdmin />}>
-        <Route path="/admin" element={<AdminDashboard />} />
+        {/* 🛡️ Admin Only */}
+        <Route element={<RequireAuth />}>
+          <Route element={<RequireAdmin />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+          </Route>
+        </Route>
       </Route>
 
       {/* ❌ Fallback */}

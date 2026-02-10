@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { addToCart } from "../../api/cart.api";
 import { Product } from "./ProductList";
+import { axiosPrivate } from "../../api/axios";
+import useCart from "../../hooks/useCart";
 
 type Props = {
   product: Product;
@@ -10,6 +12,8 @@ type Props = {
 const ProductCard = ({ product }: Props) => {
   const navigate = useNavigate();
   const { auth } = useAuth();
+  const { refreshCart } = useCart();
+
 
   const handleAddToCart = async () => {
     if (!auth?.accessToken) {
@@ -17,7 +21,9 @@ const ProductCard = ({ product }: Props) => {
       return;
     }
 
-    await addToCart({ productId: product._id, qty: 1 });
+    await addToCart(axiosPrivate, { productId: product._id, qty: 1 });
+
+    await refreshCart();
   };
 
   return (

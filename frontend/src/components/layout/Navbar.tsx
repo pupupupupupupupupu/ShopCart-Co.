@@ -31,6 +31,7 @@ const Navbar = () => {
     >
       <Link to="/">Products</Link>
 
+      {isAdmin && <Link to="/admin/products">Manage Products</Link>}
       {!isLoggedIn && <Link to="/login">Login</Link>}
       {!isLoggedIn && <Link to="/register">Register</Link>}
 

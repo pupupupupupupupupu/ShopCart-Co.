@@ -1,4 +1,5 @@
 import { updateCartItem, removeFromCart } from "../../api/cart.api";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { CartItemType } from "./CartPage";
 
 type Props = {
@@ -7,16 +8,27 @@ type Props = {
 };
 
 const CartItem = ({ item, onChange }: Props) => {
-  const handleQtyChange = async (qty: number) => {
-    await updateCartItem({
+  const axiosPrivate = useAxiosPrivate();
+  const increaseQty = async () => {
+    await updateCartItem(axiosPrivate, {
       productId: item.productId._id,
-      qty,
+      qty: item.qty + 1,
+    });
+    onChange();
+  };
+
+  const decreaseQty = async () => {
+    if (item.qty <= 1) return;
+
+    await updateCartItem(axiosPrivate,{
+      productId: item.productId._id,
+      qty: item.qty - 1,
     });
     onChange();
   };
 
   const handleRemove = async () => {
-    await removeFromCart(item.productId._id);
+    await removeFromCart(axiosPrivate, item.productId._id);
     onChange();
   };
 
@@ -43,13 +55,16 @@ const CartItem = ({ item, onChange }: Props) => {
         <p>${item.productId.price.toFixed(2)}</p>
       </div>
 
-      <input
-        type="number"
-        min={1}
-        value={item.qty}
-        onChange={(e) => handleQtyChange(Number(e.target.value))}
-        style={{ width: "60px" }}
-      />
+      {/* Quantity Controls */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <button onClick={decreaseQty} disabled={item.qty <= 1}>
+          −
+        </button>
+
+        <span>{item.qty}</span>
+
+        <button onClick={increaseQty}>+</button>
+      </div>
 
       <button onClick={handleRemove}>Remove</button>
     </div>

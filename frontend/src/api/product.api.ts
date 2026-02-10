@@ -28,25 +28,49 @@ export const getProductById = async (id: string) => {
 };
 
 // ADMIN ONLY
+// export const createProduct = async (formData: FormData) => {
+//   const response = await axiosPrivate.post("/admin/products", formData, {
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//     },
+//   });
+//   return response.data;
+// };
+
+// export const updateProduct = async (id: string, formData: FormData) => {
+//   const response = await axiosPrivate.put(`/admin/products/${id}`, formData, {
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//     },
+//   });
+//   return response.data;
+// };
 export const createProduct = async (formData: FormData) => {
-  const response = await axiosPrivate.post("/admin/products", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await axiosPrivate.post(
+    "/products/admin",
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
   return response.data;
 };
 
 export const updateProduct = async (id: string, formData: FormData) => {
-  const response = await axiosPrivate.put(`/admin/products/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await axiosPrivate.put(
+    `/products/admin/${id}`,
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
   return response.data;
 };
+
+
 
 export const deleteProduct = async (id: string) => {
   const response = await axiosPrivate.delete(`/admin/products/${id}`);
   return response.data;
 };
+

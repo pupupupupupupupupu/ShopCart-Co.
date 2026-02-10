@@ -3,7 +3,11 @@ import { getProducts, deleteProduct } from "../../api/product.api";
 import Loader from "../../components/common/Loader";
 import ErrorBox from "../../components/common/ErrorBox";
 
-const ProductTable = () => {
+type Props = {
+  onEdit: (product: any) => void;
+};
+
+const ProductTable = ({ onEdit }: Props) => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -42,7 +46,7 @@ const ProductTable = () => {
             <th>Name</th>
             <th>Price</th>
             <th>Stock</th>
-            <th />
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -52,7 +56,10 @@ const ProductTable = () => {
               <td>${p.price}</td>
               <td>{p.stock}</td>
               <td>
-                <button onClick={() => handleDelete(p._id)}>Delete</button>
+                <button onClick={() => onEdit(p)}>Edit</button>{" "}
+                <button onClick={() => handleDelete(p._id)}>
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

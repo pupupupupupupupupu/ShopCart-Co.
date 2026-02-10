@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { getCart } from "../api/cart.api";
 import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 type CartContextType = {
   totalItems: number;
@@ -18,6 +19,7 @@ type Props = {
 
 export const CartProvider = ({ children }: Props) => {
   const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   const [totalItems, setTotalItems] = useState(0);
 
   const refreshCart = async () => {
@@ -27,7 +29,7 @@ export const CartProvider = ({ children }: Props) => {
     }
 
     try {
-      const data = await getCart();
+      const data = await getCart(axiosPrivate);
       const count = data.items.reduce(
         (sum: number, item: any) => sum + item.qty,
         0

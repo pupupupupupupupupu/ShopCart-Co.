@@ -2,6 +2,14 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../api/auth.api";
 import useAuth from "../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
+
+type DecodedToken = {
+  UserInfo: {
+    username: string;
+    roles: number[];
+  };
+};
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,6 +18,8 @@ const Login = () => {
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [error, setError] = useState("");
+  
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +27,20 @@ const Login = () => {
 
     try {
       const data = await login({ user, pwd });
-      setAuth({ user, accessToken: data.accessToken });
+      const decoded = jwtDecode<DecodedToken>(data.accessToken);
+
+    setAuth({
+      user: decoded.UserInfo.username,
+      roles: decoded.UserInfo.roles,
+      accessToken: data.accessToken,
+    });
+
+      console.log("Access Token:", data.accessToken);
+
+      // TEMP DEBUG ONLY
+      const payload = JSON.parse(atob(data.accessToken.split(".")[1]));
+      console.log("Decoded JWT:", payload);
+
       navigate("/", { replace: true });
     } catch (err: any) {
       setError("Invalid username or password");
