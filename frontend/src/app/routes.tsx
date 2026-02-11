@@ -15,12 +15,13 @@ import PersistLogin from "../auth/PersistLogin";
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route element={<PersistLogin />}>
+      
       {/* 🌍 Public Routes */}
       <Route path="/" element={<ProductList />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      <Route element={<PersistLogin />}>
         {/* 🔐 Logged-in Users */}
         <Route element={<RequireAuth />}>
           <Route path="/cart" element={<CartPage />} />
@@ -33,6 +34,7 @@ const AppRoutes = () => {
             <Route path="/admin/products" element={<AdminProducts />} />
           </Route>
         </Route>
+
       </Route>
 
       {/* ❌ Fallback */}
