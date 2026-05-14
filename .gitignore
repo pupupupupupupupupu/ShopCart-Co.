@@ -1,0 +1,10 @@
+.env
+backend/node_modules/
+backend/.env
+
+frontend/node_modules/
+frontend/.env
+frontend/dist/
+frontend/README.md
+
+AUTOMATION.ps1
