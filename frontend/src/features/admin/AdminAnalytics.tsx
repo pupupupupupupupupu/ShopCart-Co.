@@ -7,7 +7,6 @@ import { Skeleton } from "../../components/common/Skeleton";
 declare const Recharts: any;
 
 type DayRevenue   = { _id: string; revenue: number; orders: number };
-type TopProduct   = { _id: string; name: string; revenue: number; unitsSold: number };
 type StatusCount  = { _id: string; count: number };
 type LowStock     = { _id: string; name: string; stock: number };
 
@@ -107,7 +106,7 @@ const AdminAnalytics = () => {
       {chartsReady && (window as any).Recharts ? (
         (() => {
           const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-            ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend } = (window as any).Recharts;
+            ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } = (window as any).Recharts;
 
           return (
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>

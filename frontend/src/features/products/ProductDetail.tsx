@@ -6,7 +6,6 @@ import useAuth from "../../hooks/useAuth";
 import useCart from "../../hooks/useCart";
 import { addToCart } from "../../api/cart.api";
 import { useToast } from "../../context/ToastContext";
-import Loader from "../../components/common/Loader";
 import { Skeleton } from "../../components/common/Skeleton";
 
 type Review = { _id: string; username: string; rating: number; comment: string; createdAt: string };
